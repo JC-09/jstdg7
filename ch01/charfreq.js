@@ -20,7 +20,7 @@ class DefaultMap extends Map {
             return super.get(key);        // return its value from superclass.
         }
         else {
-            return this.defaultValue;     // Otherwise return the default value
+            return this.defaultValue;     // Otherwise return the default value  /*super.get() = get(key: K): V | undefined; */
         }
     }
 }
@@ -35,20 +35,39 @@ class Histogram {
     // This function updates the histogram with the letters of text.
     add(text) {
         // Remove whitespace from the text, and convert to upper case
-        text = text.replace(/\s/g, "").toUpperCase();
+        text = text.replace(/\s/g, "").toUpperCase();  /* /\s/g is all kind of space */
 
         // Now loop through the characters of the text
         for(let character of text) {
             let count = this.letterCounts.get(character); // Get old count
             this.letterCounts.set(character, count+1);    // Increment it
-            this.totalLetters++;
+            this.totalLetters++;  // Increment the total letters to be used for percentage calcualtion later.
         }
     }
 
     // Convert the histogram to a string that displays an ASCII graphic
     toString() {
         // Convert the Map to an array of [key,value] arrays
-        let entries = [...this.letterCounts];
+        
+        let entries = [...this.letterCounts];  // The ... operator spreads the letterCounts DefaultMap out
+        /** entries = 
+            [
+             [ '/', 81 ],  [ '*', 14 ],  [ 'T', 305 ], [ 'H', 107 ],
+            [ 'I', 126 ], [ 'S', 176 ], [ 'N', 160 ], [ 'O', 150 ],
+            [ 'D', 64 ],  [ 'E', 287 ], [ 'P', 49 ],  [ 'R', 183 ],
+            [ 'G', 44 ],  [ 'A', 163 ], [ 'M', 55 ],  [ 'X', 16 ],
+            [ 'F', 57 ],  [ 'U', 85 ],  [ ',', 15 ],  [ 'C', 92 ],
+            [ 'Q', 5 ],   [ 'Y', 38 ],  [ 'L', 92 ],  [ '.', 52 ],
+            [ '1', 14 ],  [ '2', 2 ],   [ '-', 5 ],   [ 'V', 19 ],
+            [ 'K', 17 ],  [ ':', 5 ],   [ 'J', 4 ],   [ '<', 2 ],
+            [ '(', 40 ],  [ ')', 40 ],  [ 'W', 12 ],  [ '{', 20 ],
+            [ ';', 27 ],  [ '=', 20 ],  [ 'B', 15 ],  [ '}', 20 ],
+            [ '|', 1 ],   [ '0', 6 ],   [ '\\', 3 ],  [ '"', 8 ],
+            [ '+', 3 ],   [ '[', 13 ],  [ ']', 13 ],  [ '>', 5 ],
+            [ '?', 1 ],   [ '%', 2 ],   [ '`', 2 ],   [ '$', 3 ],
+            [ '#', 1 ],   [ '8', 1 ]
+            ]
+         */
 
         // Sort the array by count, then alphabetically
         entries.sort((a,b) => {              // A function to define sort order.
@@ -83,7 +102,8 @@ class Histogram {
 async function histogramFromStdin() {
     process.stdin.setEncoding("utf-8"); // Read Unicode strings, not bytes
     let histogram = new Histogram();
-    for await (let chunk of process.stdin) {
+    
+    for await (let chunk of process.stdin) {// each chunk is a file passed in through stdin
         histogram.add(chunk);
     }
     return histogram;
@@ -92,3 +112,4 @@ async function histogramFromStdin() {
 // This one final line of code is the main body of the program.
 // It makes a Histogram object from standard input, then prints the histogram.
 histogramFromStdin().then(histogram => { console.log(histogram.toString()); });
+
